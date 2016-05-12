@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
@@ -19,7 +20,8 @@ public class BottomMenuLayout extends RelativeLayout implements IMenu {
     private boolean isShowing=false;
     private int mWidth=0;
     private int mHeight=0;
-    private final long delayTime=200L;
+    private final long delayTime=100L;
+    private BlurringView mBlurringView;
     public BottomMenuLayout(Context context) {
         super(context);
     }
@@ -58,6 +60,7 @@ public class BottomMenuLayout extends RelativeLayout implements IMenu {
         AnimatorSet mAnimatorSet=new AnimatorSet();
         //执行容器平移
         ObjectAnimator translationSelf=ObjectAnimator.ofFloat(this, "translationY", mHeight,0).setDuration(300);
+
         translationSelf.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -83,10 +86,12 @@ public class BottomMenuLayout extends RelativeLayout implements IMenu {
         });
         mAnimatorSet.playSequentially(translationSelf);
         //为子控件单独设置设置对应动画
+        long deyTime=0;
         for(int i=0;i<getChildCount();i++){
             getChildAt(i).setAlpha(0f);
             final ObjectAnimator translationChild=ObjectAnimator.ofFloat(getChildAt(i), "translationY", mHeight,0).setDuration(300);
-            translationChild.setStartDelay(delayTime*i);
+            deyTime+=delayTime;
+            translationChild.setStartDelay(deyTime);
             translationChild.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -113,6 +118,35 @@ public class BottomMenuLayout extends RelativeLayout implements IMenu {
 
         mAnimatorSet.start();
 
+
+
+        mBlurringView.refreshBlur();
+        mBlurringView.animate().alpha(1f).setDuration(200).setListener(new android.animation.Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(android.animation.Animator animation) {
+                if(mBlurringView.getVisibility()!=View.VISIBLE)
+                    mBlurringView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationCancel(android.animation.Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(android.animation.Animator animation) {
+
+            }
+        }).start();
+
+
+        tv_bottom_bar.setText("关闭菜单");
+
     }
 
 
@@ -131,8 +165,8 @@ public class BottomMenuLayout extends RelativeLayout implements IMenu {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if(getVisibility()!=View.GONE){
-                    setVisibility(View.GONE);
+                if(getVisibility()!=View.INVISIBLE){
+                    setVisibility(View.INVISIBLE);
                 }
                 isShowing=false;
             }
@@ -150,10 +184,45 @@ public class BottomMenuLayout extends RelativeLayout implements IMenu {
 
         translationSelf.start();
 
+
+        mBlurringView.animate().alpha(0f).setDuration(200).setListener(new android.animation.Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(android.animation.Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                if(mBlurringView.getVisibility()!=View.INVISIBLE)
+                    mBlurringView.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(android.animation.Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(android.animation.Animator animation) {
+
+            }
+        }).start();
+
+
+        tv_bottom_bar.setText("打开菜单");
+
     }
 
     @Override
     public boolean isShowing() {
         return isShowing;
+    }
+
+    public void setBlurView(BlurringView mBlurringView) {
+        this.mBlurringView=mBlurringView;
+    }
+    TextView tv_bottom_bar;
+    public void setBottomBar(TextView tv_bottom_bar) {
+        this.tv_bottom_bar=tv_bottom_bar;
     }
 }

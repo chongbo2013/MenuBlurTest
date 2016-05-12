@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_containt">
 
 
@@ -11,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="56dp"
-        android:background="@android:color/darker_gray"
+        android:background="@drawable/back"
         >
 
 
@@ -28,11 +30,17 @@
 
 
 
-    <!-- 用来设置模糊，遮住 上面2个 viewgourp-->
-    <ImageView android:id="@+id/blurView"
+
+
+    <com.ferris.menu.BlurringView
+        android:id="@+id/blurView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        app:blurRadius="11"
+        app:downsampleFactor="6"
+        android:visibility="gone"
+        app:overlayColor="#99FFFFFF"/>
+
 
     <!-- 弹出菜单-->
     <com.ferris.menu.BottomMenuLayout
@@ -99,7 +107,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="固定底部的TAB"
+            android:text="打开菜单"
             android:id="@+id/tv_bottom_bar"
             android:textSize="18sp"
             android:layout_gravity="center" />
